@@ -2,10 +2,11 @@
 import PersonalInfo from "@/components/form/PersonalInfo";
 import JobDetails from "@/components/form/JobDetails";
 import SkillsPreferences from "@/components/form/SkillsPreferences";
+import EmergencyContact from "@/components/form/EmergencyContact";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { jobDetailsSchema, personalInfoSchema, skillsPreferencesSchema } from "@/lib/schemas";
+import { emergencyContactSchema, jobDetailsSchema, personalInfoSchema, skillsPreferencesSchema } from "@/lib/schemas";
 
 interface FormData {
   fullName: string;
@@ -26,13 +27,19 @@ interface FormData {
   workingHoursEnd: string;
   remoteWorkPreference: number;
   extraNotes: string;
+  // Step 4 fields
+  emergencyContactName: string;
+  emergencyRelationship: string;
+  emergencyPhoneNumber: string;
+  guardianName?: string; // Optional
+  guardianPhoneNumber?: string; // Optional
 }
 
 export default function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const methods = useForm<FormData>({
-    resolver: currentStep === 0 ? zodResolver(personalInfoSchema) : currentStep === 1 ? zodResolver(jobDetailsSchema) : currentStep === 2 ? zodResolver(skillsPreferencesSchema) : undefined, // Add schema for Step 3
+    resolver: currentStep === 0 ? zodResolver(personalInfoSchema) : currentStep === 1 ? zodResolver(jobDetailsSchema) : currentStep === 2 ? zodResolver(skillsPreferencesSchema) : currentStep === 3 ? zodResolver(emergencyContactSchema) : undefined, // Add schema for Step 4
     defaultValues: {
       fullName: "",
       email: "",
@@ -52,6 +59,12 @@ export default function MultiStepForm() {
       workingHoursEnd: "",
       remoteWorkPreference: 0,
       extraNotes: "",
+      // Step 4 default values
+      emergencyContactName: "",
+      emergencyRelationship: "",
+      emergencyPhoneNumber: "",
+      guardianName: "",
+      guardianPhoneNumber: "",
     },
   });
 
@@ -86,6 +99,7 @@ export default function MultiStepForm() {
           {currentStep === 0 && <PersonalInfo />}
           {currentStep === 1 && <JobDetails />}
           {currentStep === 2 && <SkillsPreferences />}
+          {currentStep === 3 && <EmergencyContact />}
         </div>
 
         <div className="flex justify-between mt-6">
@@ -109,6 +123,8 @@ export default function MultiStepForm() {
                   isValid = await methods.trigger(["department", "positionTitle", "startDate", "jobType", "salaryExpectation", "manager"]);
                 } else if (currentStep === 2) {
                   isValid = await methods.trigger(["primarySkills", "workingHoursStart", "workingHoursEnd", "remoteWorkPreference", "extraNotes"]);
+                } else if (currentStep === 3) {
+                  isValid = await methods.trigger(["emergencyContactName", "emergencyRelationship", "emergencyPhoneNumber", "guardianName", "guardianPhoneNumber"]);
                 }
                 // Add more conditions for other steps
 

@@ -58,3 +58,16 @@ export const skillsPreferencesSchema = z.object({
   remoteWorkPreference: z.number().min(0).max(100),
   extraNotes: z.string().max(500, "Extra Notes cannot exceed 500 characters").optional(),
 });
+
+export const emergencyContactSchema = z.object({
+  emergencyContactName: z.string().min(1, "Contact Name is required"),
+  emergencyRelationship: z.string().min(1, "Relationship is required"),
+  emergencyPhoneNumber: z.string().min(1, "Phone Number is required").regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"),
+  guardianName: z.string().optional(),
+  guardianPhoneNumber: z.string().optional(),
+}).superRefine((data, ctx) => {
+  // Conditional validation for Guardian Contact if applicant is under 21
+  // We need to access dateOfBirth from the main form data for this.
+  // This will be handled in MultiStepForm's onSubmit or trigger logic
+  // as Zod's superRefine here doesn't have direct access to other step's data easily.
+});
