@@ -71,3 +71,7 @@ export const emergencyContactSchema = z.object({
   // This will be handled in MultiStepForm's onSubmit or trigger logic
   // as Zod's superRefine here doesn't have direct access to other step's data easily.
 });
+
+export const reviewSubmitSchema = z.object({
+  confirmInformation: z.boolean().refine(val => val === true, "You must confirm the information is correct"),
+});

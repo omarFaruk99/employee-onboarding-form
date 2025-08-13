@@ -3,10 +3,11 @@ import PersonalInfo from "@/components/form/PersonalInfo";
 import JobDetails from "@/components/form/JobDetails";
 import SkillsPreferences from "@/components/form/SkillsPreferences";
 import EmergencyContact from "@/components/form/EmergencyContact";
+import ReviewSubmit from "@/components/form/ReviewSubmit"; // Import ReviewSubmit
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { emergencyContactSchema, jobDetailsSchema, personalInfoSchema, skillsPreferencesSchema } from "@/lib/schemas";
+import { emergencyContactSchema, jobDetailsSchema, personalInfoSchema, reviewSubmitSchema, skillsPreferencesSchema } from "@/lib/schemas";
 
 interface FormData {
   fullName: string;
@@ -33,13 +34,15 @@ interface FormData {
   emergencyPhoneNumber: string;
   guardianName?: string; // Optional
   guardianPhoneNumber?: string; // Optional
+  // Step 5 fields
+  confirmInformation: boolean;
 }
 
 export default function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const methods = useForm<FormData>({
-    resolver: currentStep === 0 ? zodResolver(personalInfoSchema) : currentStep === 1 ? zodResolver(jobDetailsSchema) : currentStep === 2 ? zodResolver(skillsPreferencesSchema) : currentStep === 3 ? zodResolver(emergencyContactSchema) : undefined, // Add schema for Step 4
+    resolver: currentStep === 0 ? zodResolver(personalInfoSchema) : currentStep === 1 ? zodResolver(jobDetailsSchema) : currentStep === 2 ? zodResolver(skillsPreferencesSchema) : currentStep === 3 ? zodResolver(emergencyContactSchema) : currentStep === 4 ? zodResolver(reviewSubmitSchema) : undefined, // Add schema for Step 5
     defaultValues: {
       fullName: "",
       email: "",
@@ -65,6 +68,8 @@ export default function MultiStepForm() {
       emergencyPhoneNumber: "",
       guardianName: "",
       guardianPhoneNumber: "",
+      // Step 5 default values
+      confirmInformation: false,
     },
   });
 
@@ -100,6 +105,7 @@ export default function MultiStepForm() {
           {currentStep === 1 && <JobDetails />}
           {currentStep === 2 && <SkillsPreferences />}
           {currentStep === 3 && <EmergencyContact />}
+          {currentStep === 4 && <ReviewSubmit />}
         </div>
 
         <div className="flex justify-between mt-6">
@@ -125,6 +131,8 @@ export default function MultiStepForm() {
                   isValid = await methods.trigger(["primarySkills", "workingHoursStart", "workingHoursEnd", "remoteWorkPreference", "extraNotes"]);
                 } else if (currentStep === 3) {
                   isValid = await methods.trigger(["emergencyContactName", "emergencyRelationship", "emergencyPhoneNumber", "guardianName", "guardianPhoneNumber"]);
+                } else if (currentStep === 4) {
+                  isValid = await methods.trigger(["confirmInformation"]);
                 }
                 // Add more conditions for other steps
 
