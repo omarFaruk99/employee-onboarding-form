@@ -54,6 +54,15 @@ The `jobDetailsSchema` includes a `superRefine` method to enforce specific rules
 ### Unsaved Changes Warning
 An `useEffect` hook in `MultiStepForm.tsx` listens for the browser's `beforeunload` event. If the form has unsaved changes (`methods.formState.isDirty` is true), it attempts to trigger a browser confirmation dialog to warn the user before they navigate away.
 
+## Naming Conventions
+
+To maintain consistency and readability, the following naming conventions are adhered to throughout the project:
+
+*   **PascalCase**: Used for React Component filenames.
+    *   Example: `MyComponent.tsx`, `UserProfileForm.tsx`, `JobDetailsPage.tsx`
+*   **camelCase**: Used for naming variables and functions in JavaScript and TypeScript.
+    *   Example: `myVariable`, `calculateTotalAmount`, `userDataFile`
+
 ## Assumptions Made
 
 *   **"Weekend" Definition for Start Date:** The task specified "cannot be on a weekend (Friday and Saturday)" for HR/Finance departments. Based on user clarification, this has been interpreted to mean that **Friday and Saturday are the only days restricted**, and Sunday is allowed.

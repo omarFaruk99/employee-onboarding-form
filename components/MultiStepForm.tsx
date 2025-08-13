@@ -1,13 +1,19 @@
 "use client";
-import PersonalInfo from "@/components/form/PersonalInfo";
-import JobDetails from "@/components/form/JobDetails";
-import SkillsPreferences from "@/components/form/SkillsPreferences";
 import EmergencyContact from "@/components/form/EmergencyContact";
+import JobDetails from "@/components/form/JobDetails";
+import PersonalInfo from "@/components/form/PersonalInfo";
 import ReviewSubmit from "@/components/form/ReviewSubmit"; // Import ReviewSubmit
-import { useState, useEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import SkillsPreferences from "@/components/form/SkillsPreferences";
+import {
+  emergencyContactSchema,
+  jobDetailsSchema,
+  personalInfoSchema,
+  reviewSubmitSchema,
+  skillsPreferencesSchema,
+} from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { emergencyContactSchema, jobDetailsSchema, personalInfoSchema, reviewSubmitSchema, skillsPreferencesSchema } from "@/lib/schemas";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 
 interface FormData {
   fullName: string;
@@ -43,7 +49,18 @@ export default function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const methods = useForm<FormData>({
-    resolver: currentStep === 0 ? zodResolver(personalInfoSchema) : currentStep === 1 ? zodResolver(jobDetailsSchema) : currentStep === 2 ? zodResolver(skillsPreferencesSchema) : currentStep === 3 ? zodResolver(emergencyContactSchema) : currentStep === 4 ? zodResolver(reviewSubmitSchema) : undefined, // Add schema for Step 5
+    resolver:
+      currentStep === 0
+        ? zodResolver(personalInfoSchema)
+        : currentStep === 1
+        ? zodResolver(jobDetailsSchema)
+        : currentStep === 2
+        ? zodResolver(skillsPreferencesSchema)
+        : currentStep === 3
+        ? zodResolver(emergencyContactSchema)
+        : currentStep === 4
+        ? zodResolver(reviewSubmitSchema)
+        : undefined, // Add schema for Step 5
     defaultValues: {
       fullName: "",
       email: "",
@@ -80,14 +97,14 @@ export default function MultiStepForm() {
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (isDirty) {
-        event.returnValue = ''; // Standard way to trigger browser's confirmation dialog
+        event.returnValue = ""; // Standard way to trigger browser's confirmation dialog
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [isDirty]);
 
@@ -110,15 +127,17 @@ export default function MultiStepForm() {
           {[...Array(5)].map((_, index) => (
             <div
               key={index}
-              className={`w-4 h-4 rounded-full ${currentStep === index ? "bg-blue-600" : "bg-gray-300"}`}
+              className={`w-4 h-4 rounded-full ${
+                currentStep === index ? "bg-blue-600" : "bg-gray-300"
+              }`}
             ></div>
           ))}
         </div>
 
         <div>
-          <p className="text-center text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">
+          {/* <p className="text-center text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">
             Current Step: {currentStep + 1}
-          </p>
+          </p> */}
           {currentStep === 0 && <PersonalInfo />}
           {currentStep === 1 && <JobDetails />}
           {currentStep === 2 && <SkillsPreferences />}
@@ -142,13 +161,38 @@ export default function MultiStepForm() {
               onClick={async () => {
                 let isValid = false;
                 if (currentStep === 0) {
-                  isValid = await methods.trigger(["fullName", "email", "phoneNumber", "dateOfBirth", "profilePicture"]);
+                  isValid = await methods.trigger([
+                    "fullName",
+                    "email",
+                    "phoneNumber",
+                    "dateOfBirth",
+                    "profilePicture",
+                  ]);
                 } else if (currentStep === 1) {
-                  isValid = await methods.trigger(["department", "positionTitle", "startDate", "jobType", "salaryExpectation", "manager"]);
+                  isValid = await methods.trigger([
+                    "department",
+                    "positionTitle",
+                    "startDate",
+                    "jobType",
+                    "salaryExpectation",
+                    "manager",
+                  ]);
                 } else if (currentStep === 2) {
-                  isValid = await methods.trigger(["primarySkills", "workingHoursStart", "workingHoursEnd", "remoteWorkPreference", "extraNotes"]);
+                  isValid = await methods.trigger([
+                    "primarySkills",
+                    "workingHoursStart",
+                    "workingHoursEnd",
+                    "remoteWorkPreference",
+                    "extraNotes",
+                  ]);
                 } else if (currentStep === 3) {
-                  isValid = await methods.trigger(["emergencyContactName", "emergencyRelationship", "emergencyPhoneNumber", "guardianName", "guardianPhoneNumber"]);
+                  isValid = await methods.trigger([
+                    "emergencyContactName",
+                    "emergencyRelationship",
+                    "emergencyPhoneNumber",
+                    "guardianName",
+                    "guardianPhoneNumber",
+                  ]);
                 } else if (currentStep === 4) {
                   isValid = await methods.trigger(["confirmInformation"]);
                 }
@@ -164,7 +208,10 @@ export default function MultiStepForm() {
             </button>
           )}
           {currentStep === 4 && (
-            <button type="submit" className="ml-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+            <button
+              type="submit"
+              className="ml-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+            >
               Submit
             </button>
           )}
