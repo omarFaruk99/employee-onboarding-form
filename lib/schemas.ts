@@ -50,3 +50,11 @@ export const jobDetailsSchema = z.object({
   salaryExpectation: z.number().optional(), // Will be refined later based on jobType
   manager: z.string().min(1, "Manager is required"),
 });
+
+export const skillsPreferencesSchema = z.object({
+  primarySkills: z.array(z.string()).min(3, "Please select at least 3 primary skills"),
+  workingHoursStart: z.string().min(1, "Start time is required"),
+  workingHoursEnd: z.string().min(1, "End time is required"),
+  remoteWorkPreference: z.number().min(0).max(100),
+  extraNotes: z.string().max(500, "Extra Notes cannot exceed 500 characters").optional(),
+});
