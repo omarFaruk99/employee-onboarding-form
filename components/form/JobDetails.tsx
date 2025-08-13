@@ -79,7 +79,15 @@ export default function JobDetails() {
       {/* Job Type (Radio: Full-time, Part-time, Contract) */}
       <div>
         <label htmlFor="jobType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Job Type:</label>
-        <RadioGroup onValueChange={(value) => setValue("jobType", value)} value={jobType}>
+        <RadioGroup onValueChange={(value) => {
+          setValue("jobType", value);
+          // Reset salary expectation based on new job type
+          if (value === "Full-time") {
+            setValue("salaryExpectation", 30000);
+          } else if (value === "Part-time" || value === "Contract") {
+            setValue("salaryExpectation", 50);
+          }
+        }} value={jobType}>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="Full-time" id="full-time" />
             <Label htmlFor="full-time">Full-time</Label>
