@@ -3,6 +3,8 @@ import PersonalInfo from "@/components/form/PersonalInfo";
 import JobDetails from "@/components/form/JobDetails";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { jobDetailsSchema, personalInfoSchema } from "@/lib/schemas";
 
 interface FormData {
   fullName: string;
@@ -15,12 +17,15 @@ interface FormData {
   positionTitle: string;
   startDate: string;
   jobType: string;
-  salaryExpectation: string;
+  salaryExpectation: number; // Changed to number for slider
   manager: string;
 }
 
 export default function MultiStepForm() {
+  const [currentStep, setCurrentStep] = useState(0); // Moved currentStep declaration here
+
   const methods = useForm<FormData>({
+    resolver: currentStep === 0 ? zodResolver(personalInfoSchema) : currentStep === 1 ? zodResolver(jobDetailsSchema) : undefined,
     defaultValues: {
       fullName: "",
       email: "",
@@ -32,12 +37,10 @@ export default function MultiStepForm() {
       positionTitle: "",
       startDate: "",
       jobType: "",
-      salaryExpectation: "",
+      salaryExpectation: 30000, // Default for full-time
       manager: "",
     },
   });
-
-  const [currentStep, setCurrentStep] = useState(0);
 
   const onSubmit = (data: FormData) => {
     console.log(data);
@@ -81,10 +84,24 @@ export default function MultiStepForm() {
               Back
             </button>
           )}
-          {currentStep < 4 && ( // Assuming 5 steps, so next button visible until step 4 (index 3)
+          {currentStep < 4 && (
             <button
               type="button"
-              onClick={() => setCurrentStep(currentStep + 1)}
+              onClick={async () => {
+                let isValid = false;
+                if (currentStep === 0) {
+                  // Validate PersonalInfo fields
+                  isValid = await methods.trigger(["fullName", "email", "phoneNumber", "dateOfBirth", "profilePicture"]);
+                } else if (currentStep === 1) {
+                  // Validate JobDetails fields
+                  isValid = await methods.trigger(["department", "positionTitle", "startDate", "jobType", "salaryExpectation", "manager"]);
+                }
+                // Add more conditions for other steps
+
+                if (isValid) {
+                  setCurrentStep(currentStep + 1);
+                }
+              }}
               className="ml-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
               Next
