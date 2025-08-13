@@ -14,8 +14,8 @@
 /coverage
 
 #info
-# /task info.pdf
-# /task-plan.txt
+/task info.pdf
+/task-plan.txt
 
 # next.js
 /.next/
