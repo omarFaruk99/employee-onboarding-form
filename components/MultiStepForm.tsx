@@ -4,7 +4,7 @@ import JobDetails from "@/components/form/JobDetails";
 import SkillsPreferences from "@/components/form/SkillsPreferences";
 import EmergencyContact from "@/components/form/EmergencyContact";
 import ReviewSubmit from "@/components/form/ReviewSubmit"; // Import ReviewSubmit
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { emergencyContactSchema, jobDetailsSchema, personalInfoSchema, reviewSubmitSchema, skillsPreferencesSchema } from "@/lib/schemas";
@@ -24,6 +24,7 @@ interface FormData {
   manager: string;
   // Step 3 fields
   primarySkills: string[];
+  skillExperiences: Record<string, number>; // New field for skill experiences
   workingHoursStart: string;
   workingHoursEnd: string;
   remoteWorkPreference: number;
@@ -58,6 +59,7 @@ export default function MultiStepForm() {
       manager: "",
       // Step 3 default values
       primarySkills: [],
+      skillExperiences: {},
       workingHoursStart: "",
       workingHoursEnd: "",
       remoteWorkPreference: 0,
@@ -72,6 +74,22 @@ export default function MultiStepForm() {
       confirmInformation: false,
     },
   });
+
+  // Warn user about unsaved changes
+  const { isDirty } = methods.formState;
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (isDirty) {
+        event.returnValue = ''; // Standard way to trigger browser's confirmation dialog
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isDirty]);
 
   const onSubmit = (data: FormData) => {
     console.log(data);

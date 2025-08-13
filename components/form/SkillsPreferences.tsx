@@ -41,7 +41,27 @@ export default function SkillsPreferences() {
         {errors.primarySkills && <p className="text-red-500 text-sm mt-1">{errors.primarySkills.message as string}</p>}
       </div>
 
-      {/* Experience for Each Skill (conditional - will implement later) */}
+      {/* Experience for Each Skill */}
+      {selectedSkills.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Experience for Selected Skills</h3>
+          {selectedSkills.map((skill) => (
+            <div key={skill}>
+              <label htmlFor={`skillExperiences.${skill}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                {skill} (Years of Experience):
+              </label>
+              <Input
+                id={`skillExperiences.${skill}`}
+                type="number"
+                {...register(`skillExperiences.${skill}`, { valueAsNumber: true })}
+                min={0}
+                className="w-full"
+              />
+              {errors.skillExperiences?.[skill] && <p className="text-red-500 text-sm mt-1">{(errors.skillExperiences as any)[skill]?.message as string}</p>}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Preferred Working Hours (time range: start - end) */}
       <div>
@@ -68,6 +88,17 @@ export default function SkillsPreferences() {
         />
         {errors.remoteWorkPreference && <p className="text-red-500 text-sm mt-1">{errors.remoteWorkPreference.message as string}</p>}
       </div>
+
+      {watch("remoteWorkPreference") > 50 && (
+        <div className="flex items-center space-x-2 mt-4">
+          <Checkbox
+            id="managerApproved"
+            checked={watch("managerApproved")}
+            onCheckedChange={(checked) => setValue("managerApproved", checked)}
+          />
+          <Label htmlFor="managerApproved">Manager Approved</Label>
+        </div>
+      )}
 
       {/* Extra Notes (optional, max 500 characters) */}
       <div>
