@@ -1,7 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 
-export default function Step1PersonalInfo() {
+export default function PersonalInfo() {
   const { register } = useFormContext();
 
   return (

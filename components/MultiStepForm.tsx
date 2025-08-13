@@ -1,8 +1,8 @@
 "use client";
-import { Input } from "@/components/ui/input";
+import PersonalInfo from "@/components/form/PersonalInfo";
+import JobDetails from "@/components/form/JobDetails";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import Step1PersonalInfo from "@/components/form/step1-personal-info";
 
 interface FormData {
   fullName: string;
@@ -10,6 +10,13 @@ interface FormData {
   phoneNumber: string;
   dateOfBirth: string;
   profilePicture: FileList; // FileList for file input
+  // Step 2 fields
+  department: string;
+  positionTitle: string;
+  startDate: string;
+  jobType: string;
+  salaryExpectation: string;
+  manager: string;
 }
 
 export default function MultiStepForm() {
@@ -19,7 +26,14 @@ export default function MultiStepForm() {
       email: "",
       phoneNumber: "",
       dateOfBirth: "",
-      profilePicture: undefined, // Initialize as undefined for file input
+      profilePicture: undefined,
+      // Step 2 default values
+      department: "",
+      positionTitle: "",
+      startDate: "",
+      jobType: "",
+      salaryExpectation: "",
+      manager: "",
     },
   });
 
@@ -53,7 +67,8 @@ export default function MultiStepForm() {
           <p className="text-center text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">
             Current Step: {currentStep + 1}
           </p>
-          {currentStep === 0 && <Step1PersonalInfo />}
+          {currentStep === 0 && <PersonalInfo />}
+          {currentStep === 1 && <JobDetails />}
         </div>
 
         <div className="flex justify-between mt-6">
